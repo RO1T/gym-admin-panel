@@ -17,9 +17,11 @@ declare module 'vue' {
 const api = axios.create({
   baseURL: 'http://localhost:8083/api/v1',
   headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS'
+  },
+  withCredentials: true
 });
 
 export default defineBoot(({ app }) => {

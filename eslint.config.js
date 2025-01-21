@@ -73,7 +73,6 @@ export default [
       'prefer-promise-reject-errors': 'off',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { prefer: 'type-imports' }
       ],
 
       // allow debugger during development only

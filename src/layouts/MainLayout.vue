@@ -23,11 +23,11 @@
       bordered
       style="background-color: #161E43;"
     >
-      <q-list>
+      <q-list style="height: 100%; display: flex; flex-direction: column;">
         <q-item-label
           header
           class="q-toolbar__title"
-          style="color: white; padding: 16px"
+          style="color: white; padding: 16px; max-height: 50px"
         >
           Панель управления
         </q-item-label>
@@ -37,6 +37,17 @@
           :key="link.title"
           v-bind="link"
         />
+
+        <div style="padding-left: 16px; color: rgb(184, 188, 194); cursor: pointer; margin-top: auto; margin-bottom: 20px;"
+             @click="logout"
+        >
+          <q-icon
+            :name="'logout'"
+            class="essential-link__text"
+            size="md"
+          />
+          Выйти из аккаунта
+        </div>
       </q-list>
     </q-drawer>
 
@@ -49,6 +60,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const linksList: EssentialLinkProps[] = [
   {
@@ -81,6 +94,11 @@ const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function logout(): void {
+ localStorage.clear();
+  router.push('/login');
 }
 </script>
 <style>

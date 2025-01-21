@@ -1,5 +1,19 @@
 <template>
   <q-page class="flex flex-center">
+    <q-card v-if="videos.length" style="width: 80%; padding: 20px 40px; display: flex; gap: 20px; flex-wrap: wrap;">
+      <q-card
+        v-for="video in videos"
+        :key="video.ID"
+        style="background-color: rgb(22, 30, 67); width: min-content; padding: 10px 20px;
+        color: gray; text-wrap: nowrap; display: flex; justify-content: space-between; align-items: center; gap: 5px"
+      >
+        <span>
+          Название: {{ video.Name }}
+        </span>
+        <q-btn icon="edit" flat size="10px" @click="isModalChangeNameVideo = true; index = video.ID"/>
+        <q-btn icon="delete" flat size="10px" @click="index = video.ID; removeVideo()" />
+      </q-card>
+    </q-card>
     <div class="upload-wrapper">
       <div class="upload-container" @click="handleContainerClick">
         <div class="upload-header">
@@ -42,8 +56,8 @@
               flat
               icon="cancel"
               color="negative"
+              size="sm"
               @click.stop="removeFile(index)"
-            size="sm"
             />
           </div>
         </div>
@@ -52,18 +66,41 @@
       <q-btn
         label="Отправить"
         color="secondary"
-        @click="uploadFiles"
-        :disabled="uploadedFiles.length === 0 || isUploading"
+        :disabled="isUploading"
         class="upload-btn q-mt-md"
         style="width: 80%"
+        @click="uploadFiles"
       />
     </div>
   </q-page>
+  <q-dialog v-model="isModalChangeNameVideo">
+    <q-card style="min-width: 400px; min-height: 200px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px">
+      <q-input
+        v-model="newVideoName"
+        label="Название видео"
+        placeholer="Введите новое название видео"
+        style="width: 80%"
+      />
+      <div style="width: 80%; display: flex; gap: 20px;">
+        <q-btn
+          label="Отмена"
+          color="positive"
+          style="width: 50%"
+          @click="isModalChangeNameVideo = false"
+        />
+        <q-btn
+          label="Сохранить"
+          color="negative"
+          style="width: 50%"
+          @click="changeVideoName(index); isModalChangeNameVideo = false"
+        />
+      </div>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import axios from 'axios';
+import { defineComponent, onMounted, ref } from 'vue';
 
 export default defineComponent({
   name: 'VideoUploadPage',
@@ -73,6 +110,10 @@ export default defineComponent({
     const isUploading = ref(false);
     const uploadProgress = ref(0);
     const errorMessage = ref<string>('');
+    const videos = ref<{ID: number, Name: string}[]>([])
+    const isModalChangeNameVideo = ref(false)
+    const newVideoName = ref('')
+    const index = ref()
 
     /** Триггерим выбор файла */
     const triggerFileInput = () => {
@@ -120,7 +161,7 @@ export default defineComponent({
       isUploading.value = true;
       const formData = new FormData();
       uploadedFiles.value.forEach((file) => {
-        formData.append('files', file);
+        formData.append('file', file);
       });
 
       const token = localStorage.getItem('token');
@@ -132,26 +173,78 @@ export default defineComponent({
 
       try {
         // TODO добавть корректной ури
-        await axios.post('http://localhost:8083/api/v1/videos', formData, {
+        await fetch('http://localhost:8083/api/v1/videos', {
+          method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
           },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              uploadProgress.value = (progressEvent.loaded / progressEvent.total) * 100;
-            }
-          },
+          body: formData
         });
+
         isUploading.value = false;
         uploadedFiles.value = [];
+        init()
       } catch (error) {
         console.error(error);
 
         errorMessage.value = 'Ошибка при загрузке файла';
         isUploading.value = false;
       }
+      isUploading.value = false;
     };
+    const init = async () => {
+      await fetch(`http://localhost:8083/api/v1/videos`, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': '*/*',
+          'Access-Control-Allow-Origin': 'GET'
+        }
+      }).then(async (res) => {
+        if (res.ok) {
+          const response = await res.json()
+          videos.value = response
+        }
+      })
+    }
+
+    const changeVideoName = async (idx: number) => {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:8083/api/v1/videos/${idx}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': '*/*',
+          'Access-Control-Allow-Origin': 'PUT',
+          'Authorization': `Bearer ${token}`,
+        }, body: JSON.stringify({ name: newVideoName.value })
+      }).then(async (res) => {
+        if (res.ok) {
+          init()
+        }
+      })
+    }
+
+    const removeVideo = async () => {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:8083/api/v1/videos/${index.value}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': '*/*',
+          'Access-Control-Allow-Origin': 'DELETE',
+          'Authorization': `Bearer ${token}`,
+        }
+      }).then(async (res) => {
+        if (res.ok) {
+          init()
+        }
+      })
+    }
+
+    onMounted(async () => {
+      init()
+    })
 
     return {
       fileInput,
@@ -164,6 +257,12 @@ export default defineComponent({
       removeFile,
       uploadFiles,
       handleContainerClick,
+      videos,
+      isModalChangeNameVideo,
+      newVideoName,
+      changeVideoName,
+      index,
+      removeVideo
     };
   },
 });
