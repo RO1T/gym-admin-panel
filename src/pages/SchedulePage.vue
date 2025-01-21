@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: rgb(22, 30, 67); width: 100%; height: 100vh; margin-top: 0;">
+  <div style="width: 100%; height: 100vh; margin-top: 0;">
     <h3
       style="margin-left: 30px; margin-top: 0; padding-top: 20px; color: white"
     >

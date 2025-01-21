@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <q-page-container>
-        <q-page style="background-color: #161e43; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 20px;">
+        <q-page class="bg-gradient" style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 20px;">
           <q-input
             v-if="!isCodeSended"
             v-model="login"
@@ -81,5 +81,7 @@ const onLogin = async () => {
 </script>
 
 <style scoped>
-
+  .bg-gradient{
+    background: var(--app-background-gradient);
+  }
 </style>

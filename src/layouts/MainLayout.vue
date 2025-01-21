@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="bg-gradient">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -86,5 +86,8 @@ function toggleLeftDrawer () {
 <style>
 .q-drawer--left {
   border-right: none !important;
+}
+.bg-gradient{
+  background: var(--app-background-gradient);
 }
 </style>
