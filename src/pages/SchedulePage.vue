@@ -98,9 +98,6 @@ const init = () => {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-type': 'application/json',
-          'Accept': '*/*',
-          'Access-Control-Allow-Origin': 'GET'
         },
         }).then(async (res) => {
           const response = await res.json()
@@ -115,11 +112,6 @@ onMounted(async () => {
 
   await fetch(`http://localhost:8083/api/v1/videos`, {
     method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': 'GET'
-    }
   }).then(async (res) => {
     if (res.ok) {
       const response = await res.json()
@@ -131,31 +123,11 @@ onMounted(async () => {
 const isEditModalOpen = ref(false)
 const newVideoName = ref('')
 
-// const removeSchedule = async () => {
-//   const token = localStorage.getItem('token');
-//   await fetch(`http://localhost:8083/api/v1/videos/${index.value}`, {
-//     method: 'DELETE',
-//     headers: {
-//       'Content-type': 'application/json',
-//       'Accept': '*/*',
-//       'Access-Control-Allow-Origin': 'DELETE',
-//       'Authorization': `Bearer ${token}`,
-//     }
-//   }).then(async (res) => {
-//     if (res.ok) {
-//       init()
-//     }
-//   })
-// }
-
 const _removeSchedule = async () => {
   const token = localStorage.getItem('token');
   await fetch(`http://localhost:8083/api/v1/schedule/${index.value}`, {
     method: 'DELETE',
     headers: {
-      'Content-type': 'application/json',
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': 'DELETE',
       'Authorization': `Bearer ${token}`,
     },
   }).then(async (res) => {
@@ -171,9 +143,6 @@ const addSchedule = async (id: number) => {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Content-type': 'application/json',
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': 'GET'
     },
     }).then(async () => {
       init()

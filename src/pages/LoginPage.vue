@@ -43,9 +43,10 @@
 </template>
 
 <script setup lang="ts">
+import { api } from 'src/boot/axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-// import type { EmailResponse } from 'src/types/api';
+import type { EmailResponse } from 'src/types/api';
 
 const router = useRouter()
 
@@ -55,55 +56,27 @@ const userId = ref('')
 const isCodeSended = ref(false)
 
 const onSubmit = async () => {
-  // const url = 'email/send'
+  const url = 'email/send'
 
-  await fetch('http://localhost:8083/api/v1/email/send', {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json',
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': 'POST'
-    },
-    body: JSON.stringify({email: login.value})
+  await api.post<EmailResponse>(url, {
+    email: login.value
+  }).then((res) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    userId.value = res.data.id
   })
-  .then(async (res) => {
-    if (res.ok) {
-      const response = await res.json()
-      userId.value = response.id
-    } else {
-      isCodeSended.value = false
-    }
-  })
-  .catch(() => {
-    isCodeSended.value = false
-  })
-
-  // await api.post<EmailResponse>(url, {
-  //   email: login.value
-  // }).then((res) => {
-  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //   // @ts-ignore
-  //   userId.value = res.data.id
-  // })
 }
 
 const onLogin = async () => {
-  await fetch(`http://localhost:8083/api/v1/email/${userId.value}/confirm`, {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json',
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': 'POST'
-    },
-    body: JSON.stringify({code: +code.value})
-  }).then(async (res) => {
-    if (res.ok) {
-      const response = await res.json()
-      localStorage.setItem('token', response.token)
-      router.push('/admin')
-    } else {
-      isCodeSended.value = false
-    }
+  const url = `email/${userId.value}/confirm`
+
+  await api.post(url, {
+    code: Number(code.value)
+  }).then((res) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    localStorage.setItem('token', res.data.token)
+    router.push('/admin')
   })
 }
 </script>

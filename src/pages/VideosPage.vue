@@ -172,7 +172,6 @@ export default defineComponent({
       }
 
       try {
-        // TODO добавть корректной ури
         await fetch('http://localhost:8083/api/v1/videos', {
           method: 'POST',
           headers: {
@@ -195,11 +194,6 @@ export default defineComponent({
     const init = async () => {
       await fetch(`http://localhost:8083/api/v1/videos`, {
         method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-          'Accept': '*/*',
-          'Access-Control-Allow-Origin': 'GET'
-        }
       }).then(async (res) => {
         if (res.ok) {
           const response = await res.json()
@@ -213,9 +207,6 @@ export default defineComponent({
       await fetch(`http://localhost:8083/api/v1/videos/${idx}`, {
         method: 'PUT',
         headers: {
-          'Content-type': 'application/json',
-          'Accept': '*/*',
-          'Access-Control-Allow-Origin': 'PUT',
           'Authorization': `Bearer ${token}`,
         }, body: JSON.stringify({ name: newVideoName.value })
       }).then(async (res) => {
@@ -230,9 +221,6 @@ export default defineComponent({
       await fetch(`http://localhost:8083/api/v1/videos/${index.value}`, {
         method: 'DELETE',
         headers: {
-          'Content-type': 'application/json',
-          'Accept': '*/*',
-          'Access-Control-Allow-Origin': 'DELETE',
           'Authorization': `Bearer ${token}`,
         }
       }).then(async (res) => {
