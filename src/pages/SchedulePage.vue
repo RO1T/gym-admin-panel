@@ -142,7 +142,6 @@ const init = () => {
         },
         }).then(async (res) => {
           const response = await res.json()
-          console.log(response)
           day.items = response
         })
     }, idx * 50)
@@ -240,7 +239,6 @@ const onEdit = (videoName:string, videoID:string, dayOfWeek:number) => {
 
 const onSelectedVideoChange = (value:string) =>{
   const [video] = getVideoIdByName(value)
-  console.log('Selected clip ID',video.ID)
   videoToSchedule.value.videoid = video.ID.toString()
 }
 

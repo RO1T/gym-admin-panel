@@ -1,111 +1,112 @@
 <template>
   <q-page padding>
-    <!-- Таблица -->
-    <div class="row q-gutter-md" style="width: 100%; display: flex; align-items: center; justify-content: center" >
-      <div class="col-12 col-sm-6" style="width: 80%">
-        <q-card flat bordered>
-          <q-card-section>
-            <div class="text-h6">Просмотры видео по дням недели</div>
-          </q-card-section>
+    <!-- Tabs -->
+    <div class="statistics__wrapper">
+      <h3>Аналитика всех видео</h3>
+      <div class="statistics__controls">
+        <div class="statistics__selectors">
+          <div class="selector" v-for="(option, idx) in selectableOptions" :key="idx">
+            <button
+              v-bind:class="option.type === state.activeState ? 'active' : ''"
+              @click="state.activeState = option.type"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
 
-          <q-separator />
-
-          <q-card-section>
-            <table class="q-table">
-              <thead>
-              <tr>
-                <th>День недели</th>
-                <th>Количество просмотров</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(data, index) in mockData" :key="index">
-                <td style="text-align: center">{{ data.day }}</td>
-                <td style="text-align: center">{{ data.views }}</td>
-              </tr>
-              </tbody>
-            </table>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- Диаграмма -->
-      <div class="col-12 col-sm-6" style="width: 80%;">
-        <q-card flat bordered style="min-height: 300px">
-          <q-card-section style="min-height: 300px">
-            <canvas ref="videoChart" style="margin: 0 auto; height: 250px"></canvas>
-          </q-card-section>
-        </q-card>
+        <!--   Выбор временного диапазона     -->
+        <div class="statistics__date-picker">
+          <span>Выберите промежуток</span>
+          <div class="date-inputs">
+            <input :value="state.selectedStartDate" type="date" /> -
+            <input :value="state.selectedEndDate" type="date" />
+          </div>
+          <!--    Отображает сообщение об ошибке если есть      -->
+          <span v-if="state.dateRangeError.isError" style="color: red">
+            {{ state.dateRangeError.errorMessage }}
+          </span>
+        </div>
       </div>
     </div>
+
+    <StatisticsChartComponent :view-type="state.activeState" />
   </q-page>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-import { Chart, registerables } from 'chart.js'
+import { defineComponent, ref } from 'vue'
+import StatisticsChartComponent from 'components/StatisticsChartComponent.vue'
 
 export default defineComponent({
   name: 'VideoStats',
+  components: { StatisticsChartComponent },
   setup() {
-    const videoChart = ref<HTMLCanvasElement | null>(null);
+    interface errorWithMessage{
+      isError: boolean
+      errorMessage: string
+    }
 
-    // Mock data
-    const mockData = [
-      { day: 'Понедельник', views: Math.floor(0) },
-      { day: 'Вторник', views: Math.floor(0) },
-      { day: 'Среда', views: Math.floor(21) },
-      { day: 'Четверг', views: Math.floor(Math.random() * 10) },
-      { day: 'Пятница', views: Math.floor(0) },
-      { day: 'Суббота', views: Math.floor(0) },
-      { day: 'Воскресенье', views: Math.floor(0) }
-    ];
+    // Selectors state
+    const state = ref({
+      activeState: ref('full'),
+      selectedStartDate: ref(''),
+      selectedEndDate: ref(''),
+      dateRangeError: ref<errorWithMessage>({ isError: false, errorMessage: '' })
+    })
 
-    onMounted(() => {
-      if (!videoChart.value) return;
+    //Selectors options
+    const selectableOptions = [
+      { type: 'full', label: 'Кол-во полных просмотров' },
+      { type: 'half', label: 'Кол-во просмотров на половину' },
+      { type: 'declined', label: 'Кол-во отклоненных просмотров' },
+    ]
 
-      Chart.register(...registerables);
-
-      new Chart(videoChart.value.getContext('2d')!, {
-        type: 'bar',
-        data: {
-          labels: mockData.map(data => data.day),
-          datasets: [{
-            label: 'Просмотры',
-            backgroundColor: '#1976D2',
-            data: mockData.map(data => data.views)
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Количество просмотров'
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Дни недели'
-              }
-            }
-          }
-        }
-      });
-    });
+    //Event Handlers
+    const onDateInputChange = () => {
+      //Do smth if date changed
+      //If incorrect range (selectedStartDate > selectedEndDate) =>
+      // dateRangeError.value = {isError:true, errorMessage: 'Invalid Range'}
+    }
 
     return {
-      mockData,
-      videoChart
-    };
-  }
-});
+      state,
+      selectableOptions,
+      onDateInputChange,
+    }
+  },
+})
 </script>
 
 <style scoped>
-.q-table {
-  width: 100%;
+.statistics__controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 50px;
+}
+.statistics__selectors {
+  display: flex;
+}
+
+.selector > button {
+  padding: 5px 15px;
+  background: #fff;
+  border: none;
+}
+
+.selector > button:hover {
+  cursor: pointer;
+}
+
+.selector > button.active {
+  color: #161e43;
+  box-shadow: 0 -2.5px 0 #161e43 inset;
+}
+
+.statistics__date-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 </style>
