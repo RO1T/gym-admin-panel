@@ -102,13 +102,13 @@ const saturdayVideos: { ID: string, Time: string, VideoID: string, Name: string 
 const sundayVideos: { ID: string, Time: string, VideoID: string, Name: string }[] = []
 
 const days = ref([
-  { items: mondayVideos, name: "Понедельник", bg: 'bg-primary', order:1 },
-  { items: tuesdayVideos, name: "Вторник", bg: 'bg-primary',order:2 },
-  { items: wednesdayVideos, name: "Среда", bg: 'bg-primary',order:3 },
-  { items: thursdayVideos, name: "Четверг", bg: 'bg-primary',order:4 },
-  { items: fridayVideos, name: "Пятница", bg: 'bg-primary',order:5 },
-  { items: saturdayVideos, name: "Суббота", bg: 'bg-primary',order:6 },
-  { items: sundayVideos, name: "Воскресенье", bg: 'bg-primary',order:7 },
+  { items: mondayVideos, name: "Понедельник", bg: 'bg-primary', order:0 },
+  { items: tuesdayVideos, name: "Вторник", bg: 'bg-primary',order:1 },
+  { items: wednesdayVideos, name: "Среда", bg: 'bg-primary',order:2 },
+  { items: thursdayVideos, name: "Четверг", bg: 'bg-primary',order:3 },
+  { items: fridayVideos, name: "Пятница", bg: 'bg-primary',order:4 },
+  { items: saturdayVideos, name: "Суббота", bg: 'bg-primary',order:5 },
+  { items: sundayVideos, name: "Воскресенье", bg: 'bg-primary',order:6 },
 ])
 const videos = ref()
 const index = ref()
@@ -135,7 +135,7 @@ const init = () => {
 
   days.value.forEach(async (day, idx) => {
     setTimeout(async () => {
-      await fetch(`http://localhost:8083/api/v1/schedule/${idx + 1}`, {
+      await fetch(`http://localhost:8083/api/v1/schedule/${idx}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
