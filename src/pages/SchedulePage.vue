@@ -112,13 +112,13 @@ const saturdayVideos: { ID: string; Time: string; VideoID: string; Name: string 
 const sundayVideos: { ID: string; Time: string; VideoID: string; Name: string }[] = []
 
 const days = ref([
-  { items: mondayVideos, name: 'Понедельник', bg: 'bg-primary', order: 0 },
-  { items: tuesdayVideos, name: 'Вторник', bg: 'bg-primary', order: 1 },
-  { items: wednesdayVideos, name: 'Среда', bg: 'bg-primary', order: 2 },
-  { items: thursdayVideos, name: 'Четверг', bg: 'bg-primary', order: 3 },
-  { items: fridayVideos, name: 'Пятница', bg: 'bg-primary', order: 4 },
-  { items: saturdayVideos, name: 'Суббота', bg: 'bg-primary', order: 5 },
-  { items: sundayVideos, name: 'Воскресенье', bg: 'bg-primary', order: 6 },
+  { items: mondayVideos, name: "Понедельник", bg: 'bg-primary', order:0 },
+  { items: tuesdayVideos, name: "Вторник", bg: 'bg-primary',order:1 },
+  { items: wednesdayVideos, name: "Среда", bg: 'bg-primary',order:2 },
+  { items: thursdayVideos, name: "Четверг", bg: 'bg-primary',order:3 },
+  { items: fridayVideos, name: "Пятница", bg: 'bg-primary',order:4 },
+  { items: saturdayVideos, name: "Суббота", bg: 'bg-primary',order:5 },
+  { items: sundayVideos, name: "Воскресенье", bg: 'bg-primary',order:6 },
 ])
 const token = localStorage.getItem('token')
 const videos = ref()
