@@ -8,8 +8,9 @@ declare module 'vue' {
   }
 }
 
+
 const api = axios.create({
-  baseURL: 'http://localhost:8083/api/v1',
+  baseURL: String(process.env.QUASAR_API_URL),
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'

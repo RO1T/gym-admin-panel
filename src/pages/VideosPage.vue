@@ -101,6 +101,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
+import { api } from 'boot/axios'
 
 export default defineComponent({
   name: 'VideoUploadPage',
@@ -172,12 +173,11 @@ export default defineComponent({
       }
 
       try {
-        await fetch('http://localhost:8083/api/v1/videos', {
-          method: 'POST',
+        await api.post("/videos", formData, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
           },
-          body: formData
         });
 
         isUploading.value = false;
@@ -191,43 +191,40 @@ export default defineComponent({
       }
       isUploading.value = false;
     };
+
     const init = async () => {
-      await fetch(`http://localhost:8083/api/v1/videos`, {
-        method: 'GET',
-      }).then(async (res) => {
-        if (res.ok) {
-          const response = await res.json()
-          videos.value = response
-        }
-      })
+      const response = await api.get('/videos')
+      if(response.status === 200){
+        videos.value = response.data
+      }
     }
 
     const changeVideoName = async (idx: number) => {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:8083/api/v1/videos/${idx}`, {
-        method: 'PUT',
+      const response = await api.put(`/videos/${idx}`,{
+        name: newVideoName.value
+      },{
         headers: {
           'Authorization': `Bearer ${token}`,
-        }, body: JSON.stringify({ name: newVideoName.value })
-      }).then(async (res) => {
-        if (res.ok) {
-          init()
         }
       })
+
+      if(response.status === 200){
+        init()
+      }
     }
 
     const removeVideo = async () => {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:8083/api/v1/videos/${index.value}`, {
-        method: 'DELETE',
+      const response = await api.delete(`videos/${index.value}`,{
         headers: {
           'Authorization': `Bearer ${token}`,
         }
-      }).then(async (res) => {
-        if (res.ok) {
-          init()
-        }
       })
+
+      if(response.status === 200){
+        init()
+      }
     }
 
     onMounted(async () => {

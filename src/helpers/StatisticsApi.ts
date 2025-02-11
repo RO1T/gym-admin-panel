@@ -1,3 +1,5 @@
+import { api } from 'boot/axios'
+
 export type IResponseItem={
   created_at: string,
   id: number,
@@ -24,15 +26,8 @@ export const getStatisticByViewType = async (viewType:string) => {
 }
 
 const fetchData = async () : Promise<IResponse | undefined> => {
-  let result;
-
-  await fetch(`http://localhost:8083/api/v1/stats`, {
-    method: 'GET'
-  }).then(async (res) => {
-    if(res.ok)
-      result = await res.json()
-  })
-  return result
+  const response = await api.get(`/stats`)
+  return response.status === 200 ? response.data : undefined
 }
 
 const filterData = (items:Array<IResponseItem>, viewType:string) => {
