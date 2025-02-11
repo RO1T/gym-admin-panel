@@ -38,5 +38,10 @@ npm run format
 quasar build
 ```
 
+### .env example
+```bash
+QUASAR_API_URL=http://localhost:8083/api/v1
+```
+
 ### Customize the configuration
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
